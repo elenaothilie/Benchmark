@@ -1,26 +1,288 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #ecebe8;
+  --surface: #f3f3f1;
+  --card: #ffffff;
+  --text: #1f2430;
+  --muted: #596173;
+  --line: #c8ccd3;
+
+  --avida-primary: #f47b08;
+  --avida-accent: #eba764;
+  --avida-deep: #232734;
+  --avida-mid: #4c4b53;
+  --avida-light: #e9e8e3;
+
+  --santander-primary: #ef0000;
+  --santander-accent: #c2ced6;
+  --santander-deep: #232531;
+  --santander-mid: #4e4d55;
+  --santander-light: #f0f0f1;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-sans);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.wallboard-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 1.4rem;
+  padding: 1.2rem 1.2rem 1rem;
+}
+
+.wallboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.wallboard-title {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+}
+
+.wallboard-subtle {
+  margin: 0;
+  color: var(--muted);
+  font-size: clamp(0.78rem, 1vw, 0.95rem);
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.tv-toggle {
+  font-size: 0.75rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.team-panel {
+  border-radius: 1rem;
+  padding: clamp(1rem, 2vw, 1.8rem);
+  background: var(--card);
+  border: 1px solid var(--line);
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 0.8rem;
+}
+
+.team-panel.leading {
+  box-shadow: 0 0 0 2px var(--team-primary), 0 14px 34px rgb(0 0 0 / 0.12);
+}
+
+.team-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.team-name {
+  margin: 0;
+  font-size: clamp(1.6rem, 3vw, 3rem);
+  letter-spacing: 0.02em;
+  font-family: var(--team-font), var(--font-sans), sans-serif;
+  color: var(--team-primary);
+}
+
+.lead-pill {
+  border-radius: 999px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: var(--team-primary);
+}
+
+.main-kpi-wrap {
+  border-radius: 0.9rem;
+  background: linear-gradient(145deg, #ffffff, #f5f6f8);
+  border: 1px solid #d8dde6;
+  padding: 1rem 1rem 0.8rem;
+}
+
+.main-kpi-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.main-kpi-value {
+  margin: 0.2rem 0 0;
+  font-size: clamp(3rem, 8vw, 8rem);
+  line-height: 0.95;
+  font-weight: 700;
+  color: var(--team-primary);
+  font-family: var(--team-font), var(--font-sans), sans-serif;
+}
+
+.secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.secondary-card {
+  border-radius: 0.75rem;
+  border: 1px solid #d8dde6;
+  background: #f7f8fa;
+  padding: 0.7rem 0.8rem;
+}
+
+.secondary-label {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.secondary-value {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.3rem, 2vw, 2rem);
+  font-weight: 700;
+}
+
+.admin-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.admin-card {
+  width: min(1000px, 96vw);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.admin-team {
+  border: 1px solid var(--line);
+  border-radius: 0.8rem;
+  padding: 1rem;
+  background: #fbfcfe;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+}
+
+.field label {
+  font-size: 0.8rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.field input {
+  border-radius: 0.55rem;
+  border: 1px solid var(--line);
+  background: #ffffff;
+  color: var(--text);
+  font-size: 1rem;
+  padding: 0.55rem 0.7rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 0.65rem;
+  padding: 0.6rem 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #1f2430;
+  color: #ffffff;
+}
+
+.btn-muted {
+  background: #e3e6eb;
+  color: #1f2430;
+}
+
+body.tv-mode .wallboard-shell {
+  gap: 0.85rem;
+  padding: 0.65rem;
+}
+
+body.tv-mode .wallboard-title {
+  display: none;
+}
+
+body.tv-mode .wallboard-header {
+  justify-content: flex-end;
+}
+
+body.tv-mode .wallboard-subtle {
+  font-size: 0.72rem;
+}
+
+body.tv-mode .team-panel {
+  padding: clamp(1rem, 1.7vw, 1.35rem);
+}
+
+body.tv-mode .team-name {
+  font-size: clamp(2rem, 3.7vw, 4.2rem);
+}
+
+body.tv-mode .main-kpi-value {
+  font-size: clamp(4.6rem, 11vw, 11.5rem);
+}
+
+body.tv-mode .secondary-label {
+  font-size: 0.68rem;
+}
+
+body.tv-mode .secondary-value {
+  font-size: clamp(1.4rem, 2.2vw, 2.35rem);
+}
+
+@media (max-width: 1000px) {
+  .teams-grid,
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
 }
