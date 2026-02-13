@@ -11,6 +11,8 @@ function isValidPayload(payload: TeamUpdatePayload) {
     validTeam &&
     typeof payload.team_name === "string" &&
     typeof payload.overholdelse_pct === "number" &&
+    typeof payload.previous_month_pct === "number" &&
+    typeof payload.best_month_pct === "number" &&
     typeof payload.incoming_cases === "number" &&
     typeof payload.resolved_cases === "number" &&
     typeof payload.open_backlog === "number" &&

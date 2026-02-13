@@ -11,6 +11,8 @@ const DEFAULT_TEAMS: TeamBenchmark[] = [
     team: "avida",
     team_name: "Team Avida",
     overholdelse_pct: 96.2,
+    previous_month_pct: 95.1,
+    best_month_pct: 97.4,
     incoming_cases: 418,
     resolved_cases: 407,
     open_backlog: 139,
@@ -21,6 +23,8 @@ const DEFAULT_TEAMS: TeamBenchmark[] = [
     team: "santander",
     team_name: "Team Santander",
     overholdelse_pct: 94.7,
+    previous_month_pct: 95.3,
+    best_month_pct: 96.8,
     incoming_cases: 436,
     resolved_cases: 401,
     open_backlog: 152,
@@ -43,7 +47,7 @@ export async function getBenchmarks(): Promise<TeamBenchmark[]> {
   }
 
   const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/team_benchmarks?select=team,team_name,overholdelse_pct,incoming_cases,resolved_cases,open_backlog,avg_handle_minutes,updated_at&order=team.asc`,
+    `${SUPABASE_URL}/rest/v1/team_benchmarks?select=team,team_name,overholdelse_pct,previous_month_pct,best_month_pct,incoming_cases,resolved_cases,open_backlog,avg_handle_minutes,updated_at&order=team.asc`,
     {
       cache: "no-store",
       headers: {
@@ -85,6 +89,8 @@ export async function updateBenchmark(payload: TeamUpdatePayload) {
       },
       body: JSON.stringify({
         ...payload,
+        previous_month_pct: payload.previous_month_pct,
+        best_month_pct: payload.best_month_pct,
         updated_at: new Date().toISOString(),
       }),
     },

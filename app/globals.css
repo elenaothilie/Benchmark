@@ -88,6 +88,114 @@ body {
   gap: 1rem;
 }
 
+.competition-strip {
+  border: 1px solid #d4d9e1;
+  border-radius: 0.95rem;
+  padding: 0.8rem 0.9rem;
+  background: linear-gradient(145deg, #ffffff, #f5f7fb);
+  box-shadow: 0 6px 18px rgb(20 28 45 / 0.08);
+}
+
+.competition-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.competition-label {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.competition-value {
+  margin: 0;
+  font-size: clamp(0.92rem, 1.2vw, 1.15rem);
+  font-weight: 700;
+  color: #1d2533;
+}
+
+.competition-bars {
+  margin-top: 0.7rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.competition-bar-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 3.4fr auto;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.competition-team {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: #2b3342;
+}
+
+.competition-track {
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #e4e8ef;
+  overflow: hidden;
+}
+
+.competition-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--team-primary), color-mix(in srgb, var(--team-primary) 45%, #ffffff));
+}
+
+.competition-score {
+  margin: 0;
+  min-width: 4ch;
+  text-align: right;
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #283141;
+}
+
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.overview-card {
+  border: 1px solid #d8dee8;
+  border-radius: 0.85rem;
+  background: linear-gradient(145deg, #ffffff, #f5f7fb);
+  padding: 0.7rem 0.8rem;
+}
+
+.overview-label {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.overview-value {
+  margin: 0.16rem 0 0;
+  font-size: clamp(1.5rem, 2.1vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.overview-subtle {
+  margin: 0.2rem 0 0;
+  color: #5d687c;
+  font-size: 0.78rem;
+}
+
 .team-panel {
   position: relative;
   overflow: hidden;
@@ -120,6 +228,45 @@ body {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.team-race-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.rank-pill,
+.delta-pill,
+.category-pill {
+  border-radius: 999px;
+  padding: 0.22rem 0.58rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.rank-pill {
+  color: #3a4457;
+  background: #e8edf5;
+}
+
+.rank-pill.top {
+  color: #ffffff;
+  background: linear-gradient(110deg, var(--team-primary), var(--team-accent));
+}
+
+.delta-pill {
+  border: 1px solid #d6dce7;
+  background: #f6f8fc;
+  color: #4a5569;
+}
+
+.category-pill {
+  color: #4a5569;
+  background: #eff2f7;
 }
 
 .team-name {
@@ -183,6 +330,47 @@ body {
   transition: width 0.6s ease;
 }
 
+.self-month-status {
+  margin: 0.52rem 0 0;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.self-benchmark-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.self-benchmark-card {
+  border: 1px solid #d8dde6;
+  border-radius: 0.78rem;
+  background: linear-gradient(150deg, #f9fafc, #f2f5f9);
+  padding: 0.7rem 0.8rem;
+}
+
+.self-benchmark-value {
+  margin: 0.2rem 0 0;
+  font-size: clamp(1.4rem, 2.1vw, 2.3rem);
+  font-weight: 700;
+  line-height: 1.05;
+}
+
+.best-progress-track {
+  margin-top: 0.45rem;
+  width: 100%;
+  height: 0.38rem;
+  border-radius: 999px;
+  background: #e2e7ef;
+  overflow: hidden;
+}
+
+.best-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--team-primary), var(--team-accent));
+}
+
 .secondary-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -242,6 +430,25 @@ body {
   margin: 0.2rem 0 0;
   font-size: clamp(1.3rem, 2vw, 2rem);
   font-weight: 700;
+}
+
+.secondary-delta {
+  margin: 0.22rem 0 0;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.positive {
+  color: #107c41;
+}
+
+.negative {
+  color: #b32d2e;
+}
+
+.neutral {
+  color: #5b6679;
 }
 
 .admin-shell {
@@ -349,9 +556,51 @@ body.tv-mode .secondary-value {
   font-size: clamp(1.4rem, 2.2vw, 2.35rem);
 }
 
+body.tv-mode .competition-strip {
+  padding: 0.65rem 0.75rem;
+}
+
+body.tv-mode .competition-value {
+  font-size: 0.96rem;
+}
+
+body.tv-mode .competition-team,
+body.tv-mode .competition-score {
+  font-size: 0.77rem;
+}
+
+body.tv-mode .overview-grid {
+  gap: 0.5rem;
+}
+
+body.tv-mode .overview-card {
+  padding: 0.58rem 0.65rem;
+}
+
+body.tv-mode .overview-subtle {
+  font-size: 0.7rem;
+}
+
+body.tv-mode .self-month-status {
+  font-size: 0.68rem;
+}
+
+body.tv-mode .self-benchmark-value {
+  font-size: clamp(1.4rem, 2vw, 2.05rem);
+}
+
+body.tv-mode .secondary-delta {
+  font-size: 0.66rem;
+}
+
 @media (max-width: 1000px) {
+  .overview-grid,
   .teams-grid,
   .admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .self-benchmark-grid {
     grid-template-columns: 1fr;
   }
 }

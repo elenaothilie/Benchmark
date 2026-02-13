@@ -19,6 +19,8 @@ function toState(rows: TeamBenchmark[]): RowState {
         team: "avida",
         team_name: "Team Avida",
         overholdelse_pct: 0,
+        previous_month_pct: 0,
+        best_month_pct: 0,
         incoming_cases: 0,
         resolved_cases: 0,
         open_backlog: 0,
@@ -31,6 +33,8 @@ function toState(rows: TeamBenchmark[]): RowState {
         team: "santander",
         team_name: "Team Santander",
         overholdelse_pct: 0,
+        previous_month_pct: 0,
+        best_month_pct: 0,
         incoming_cases: 0,
         resolved_cases: 0,
         open_backlog: 0,
@@ -38,6 +42,14 @@ function toState(rows: TeamBenchmark[]): RowState {
         updated_at: null,
       } as TeamBenchmark),
   };
+}
+
+function formatSigned(value: number) {
+  if (value === 0) {
+    return "0.0";
+  }
+
+  return `${value > 0 ? "+" : "-"}${Math.abs(value).toFixed(1)}`;
 }
 
 export function AdminEditor({ initialRows }: Props) {
@@ -114,9 +126,17 @@ export function AdminEditor({ initialRows }: Props) {
         <div className="admin-grid">
           {(["avida", "santander"] as const).map((teamId) => {
             const team = rows[teamId];
+            const previousDelta = team.overholdelse_pct - team.previous_month_pct;
+            const bestGap = team.overholdelse_pct - team.best_month_pct;
             return (
               <article key={teamId} className="admin-team">
                 <h2 style={{ marginTop: 0 }}>{team.team_name}</h2>
+                <p className="wallboard-subtle" style={{ marginTop: "-0.45rem" }}>
+                  Monthly trend: {formatSigned(previousDelta)} pp |{" "}
+                  {bestGap >= 0
+                    ? "Best month reached"
+                    : `${Math.abs(bestGap).toFixed(1)} pp to best`}
+                </p>
                 <div className="field">
                   <label>NET PAYER RATIO</label>
                   <input
@@ -125,6 +145,28 @@ export function AdminEditor({ initialRows }: Props) {
                     value={team.overholdelse_pct}
                     onChange={(event) =>
                       setValue(teamId, "overholdelse_pct", event.target.value)
+                    }
+                  />
+                </div>
+                <div className="field">
+                  <label>Previous month ratio</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={team.previous_month_pct}
+                    onChange={(event) =>
+                      setValue(teamId, "previous_month_pct", event.target.value)
+                    }
+                  />
+                </div>
+                <div className="field">
+                  <label>Best month ratio</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    value={team.best_month_pct}
+                    onChange={(event) =>
+                      setValue(teamId, "best_month_pct", event.target.value)
                     }
                   />
                 </div>
