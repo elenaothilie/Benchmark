@@ -118,7 +118,7 @@ export function AdminEditor({ initialRows }: Props) {
               <article key={teamId} className="admin-team">
                 <h2 style={{ marginTop: 0 }}>{team.team_name}</h2>
                 <div className="field">
-                  <label>Overholdelse %</label>
+                  <label>NET PAYRE RATIO</label>
                   <input
                     type="number"
                     step="0.1"
@@ -129,7 +129,7 @@ export function AdminEditor({ initialRows }: Props) {
                   />
                 </div>
                 <div className="field">
-                  <label>Innkommende</label>
+                  <label>Handled calls</label>
                   <input
                     type="number"
                     value={team.incoming_cases}
@@ -139,7 +139,7 @@ export function AdminEditor({ initialRows }: Props) {
                   />
                 </div>
                 <div className="field">
-                  <label>Løst i dag</label>
+                  <label>Kept percentage</label>
                   <input
                     type="number"
                     value={team.resolved_cases}
@@ -149,7 +149,7 @@ export function AdminEditor({ initialRows }: Props) {
                   />
                 </div>
                 <div className="field">
-                  <label>Åpen backlog</label>
+                  <label>Negotiation rate</label>
                   <input
                     type="number"
                     value={team.open_backlog}
@@ -159,7 +159,7 @@ export function AdminEditor({ initialRows }: Props) {
                   />
                 </div>
                 <div className="field" style={{ marginBottom: 0 }}>
-                  <label>Behandlingstid (min)</label>
+                  <label>Wrap-up (min)</label>
                   <input
                     type="number"
                     step="0.1"

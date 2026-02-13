@@ -44,6 +44,10 @@ body {
   grid-template-rows: auto 1fr auto;
   gap: 1.4rem;
   padding: 1.2rem 1.2rem 1rem;
+  background:
+    radial-gradient(circle at 12% 8%, rgb(255 255 255 / 0.8), transparent 38%),
+    radial-gradient(circle at 85% 92%, rgb(255 255 255 / 0.45), transparent 42%),
+    linear-gradient(180deg, #f4f4f2 0%, #ecebe8 100%);
 }
 
 .wallboard-header {
@@ -85,6 +89,8 @@ body {
 }
 
 .team-panel {
+  position: relative;
+  overflow: hidden;
   border-radius: 1rem;
   padding: clamp(1rem, 2vw, 1.8rem);
   background: var(--card);
@@ -92,6 +98,17 @@ body {
   display: grid;
   grid-template-rows: auto auto 1fr;
   gap: 0.8rem;
+  box-shadow: 0 8px 20px rgb(15 20 35 / 0.08);
+}
+
+.team-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 0.3rem;
+  background: linear-gradient(90deg, var(--team-primary), var(--team-accent));
+  opacity: 0.95;
 }
 
 .team-panel.leading {
@@ -126,9 +143,10 @@ body {
 
 .main-kpi-wrap {
   border-radius: 0.9rem;
-  background: linear-gradient(145deg, #ffffff, #f5f6f8);
+  background: linear-gradient(145deg, #ffffff 0%, #f6f8fb 100%);
   border: 1px solid #d8dde6;
   padding: 1rem 1rem 0.8rem;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7);
 }
 
 .main-kpi-label {
@@ -146,6 +164,23 @@ body {
   font-weight: 700;
   color: var(--team-primary);
   font-family: var(--team-font), var(--font-sans), sans-serif;
+  text-shadow: 0 6px 18px color-mix(in srgb, var(--team-primary) 28%, transparent);
+}
+
+.kpi-track {
+  margin-top: 0.6rem;
+  width: 100%;
+  height: 0.46rem;
+  border-radius: 999px;
+  background: #e4e8ef;
+  overflow: hidden;
+}
+
+.kpi-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--team-primary), var(--team-accent));
+  transition: width 0.6s ease;
 }
 
 .secondary-grid {
@@ -155,10 +190,44 @@ body {
 }
 
 .secondary-card {
+  position: relative;
   border-radius: 0.75rem;
   border: 1px solid #d8dde6;
-  background: #f7f8fa;
+  background: linear-gradient(150deg, #f8f9fb, #f1f4f8);
   padding: 0.7rem 0.8rem;
+  padding-left: 2.2rem;
+}
+
+.secondary-card::before {
+  position: absolute;
+  left: 0.7rem;
+  top: 0.62rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--team-mid);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.16);
+}
+
+.secondary-card.incoming::before {
+  content: "☎";
+}
+
+.secondary-card.resolved::before {
+  content: "✓";
+}
+
+.secondary-card.backlog::before {
+  content: "%";
+}
+
+.secondary-card.handle-time::before {
+  content: "⏱";
 }
 
 .secondary-label {
