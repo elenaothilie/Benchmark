@@ -1,7 +1,6 @@
 import { TvModeToggle } from "@/components/tv-mode-toggle";
 import { getBenchmarks } from "@/lib/supabase-rest";
 import { TEAM_THEME } from "@/lib/team-theme";
-import type { TeamBenchmark } from "@/lib/types";
 import type { CSSProperties } from "react";
 
 export const dynamic = "force-dynamic";
@@ -60,7 +59,7 @@ export default async function HomePage() {
               </div>
 
               <div className="main-kpi-wrap">
-                <p className="main-kpi-label">NET PAYRE RATIO</p>
+                <p className="main-kpi-label">NET PAYER RATIO</p>
                 <p className="main-kpi-value">
                   {formatNumber(team.overholdelse_pct, 1)}%
                 </p>

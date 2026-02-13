@@ -118,7 +118,7 @@ export function AdminEditor({ initialRows }: Props) {
               <article key={teamId} className="admin-team">
                 <h2 style={{ marginTop: 0 }}>{team.team_name}</h2>
                 <div className="field">
-                  <label>NET PAYRE RATIO</label>
+                  <label>NET PAYER RATIO</label>
                   <input
                     type="number"
                     step="0.1"
