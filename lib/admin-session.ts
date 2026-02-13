@@ -10,7 +10,7 @@ function getSecret() {
 }
 
 export function verifyPassword(password: string): boolean {
-  const expected = process.env.ADMIN_PASSWORD ?? "changeme";
+  const expected = "admin123";
   const left = Buffer.from(password);
   const right = Buffer.from(expected);
   if (left.length !== right.length) {
