@@ -3,8 +3,11 @@ import "server-only";
 import type { TeamBenchmark, TeamId, TeamUpdatePayload } from "@/lib/types";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const SUPABASE_PUBLISHABLE_KEY =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const SUPABASE_SECRET_KEY =
+  process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const DEFAULT_TEAMS: TeamBenchmark[] = [
   {
@@ -34,11 +37,11 @@ const DEFAULT_TEAMS: TeamBenchmark[] = [
 ];
 
 function hasPublicConfig() {
-  return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+  return Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
 }
 
 function hasServiceConfig() {
-  return Boolean(SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY);
+  return Boolean(SUPABASE_URL && SUPABASE_SECRET_KEY);
 }
 
 export async function getBenchmarks(): Promise<TeamBenchmark[]> {
@@ -51,8 +54,8 @@ export async function getBenchmarks(): Promise<TeamBenchmark[]> {
     {
       cache: "no-store",
       headers: {
-        apikey: SUPABASE_ANON_KEY as string,
-        Authorization: `Bearer ${SUPABASE_ANON_KEY as string}`,
+        apikey: SUPABASE_PUBLISHABLE_KEY as string,
+        Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY as string}`,
       },
     },
   );
@@ -82,8 +85,8 @@ export async function updateBenchmark(payload: TeamUpdatePayload) {
     {
       method: "PATCH",
       headers: {
-        apikey: SUPABASE_SERVICE_ROLE_KEY as string,
-        Authorization: `Bearer ${SUPABASE_SERVICE_ROLE_KEY as string}`,
+        apikey: SUPABASE_SECRET_KEY as string,
+        Authorization: `Bearer ${SUPABASE_SECRET_KEY as string}`,
         "Content-Type": "application/json",
         Prefer: "return=representation",
       },
@@ -101,5 +104,10 @@ export async function updateBenchmark(payload: TeamUpdatePayload) {
     throw new Error(`Failed to update benchmark for ${team}: ${text}`);
   }
 
-  return response.json();
+  const data = (await response.json()) as TeamBenchmark[];
+  if (!Array.isArray(data) || data.length === 0) {
+    throw new Error(`No benchmark row found for team ${team}.`);
+  }
+
+  return data;
 }

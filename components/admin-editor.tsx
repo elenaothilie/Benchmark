@@ -81,10 +81,14 @@ export function AdminEditor({ initialRows }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      const result = (await response.json().catch(() => null)) as
+        | { message?: string }
+        | null;
 
       if (!response.ok) {
         setSaving(false);
-        setStatus(`Failed to update ${payload.team_name}.`);
+        const details = result?.message ? ` ${result.message}` : "";
+        setStatus(`Failed to update ${payload.team_name}.${details}`);
         return;
       }
     }
