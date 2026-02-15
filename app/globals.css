@@ -203,6 +203,7 @@ body {
   padding: clamp(1rem, 2vw, 1.8rem);
   background: var(--card);
   border: 1px solid var(--line);
+  font-family: var(--team-font), var(--font-sans), sans-serif;
   display: grid;
   grid-template-rows: auto auto 1fr;
   gap: 0.8rem;

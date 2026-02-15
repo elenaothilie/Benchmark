@@ -1,4 +1,5 @@
 import { TvModeToggle } from "@/components/tv-mode-toggle";
+import { AutoRefresh } from "@/components/auto-refresh";
 import { getBenchmarks } from "@/lib/supabase-rest";
 import { TEAM_THEME } from "@/lib/team-theme";
 import type { CSSProperties } from "react";
@@ -84,6 +85,7 @@ export default async function HomePage() {
 
   return (
     <main className="wallboard-shell">
+      <AutoRefresh intervalMs={15000} />
       <header className="wallboard-header">
         <div>
           <h1 className="wallboard-title">Benchmark Dashboard</h1>
