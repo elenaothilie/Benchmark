@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/theme-toggle";
 import { TvModeToggle } from "@/components/tv-mode-toggle";
 import { AutoRefresh } from "@/components/auto-refresh";
 import { getBenchmarks } from "@/lib/supabase-rest";
@@ -40,13 +41,9 @@ function deltaClass(value: number, higherIsBetter = true) {
 
 function getMonthlyStatus(current: number, previous: number) {
   const delta = current - previous;
-  if (delta > 0) {
-    return `${formatSigned(delta, 1)} pp vs last month`;
-  }
-  if (delta < 0) {
-    return `${formatSigned(delta, 1)} pp vs last month`;
-  }
-  return "No change vs last month";
+  if (delta > 0) return formatSigned(delta, 1);
+  if (delta < 0) return formatSigned(delta, 1);
+  return "0";
 }
 
 export default async function HomePage() {
@@ -99,6 +96,7 @@ export default async function HomePage() {
           </p>
         </div>
         <div className="header-actions">
+          <ThemeToggle />
           <TvModeToggle />
         </div>
       </header>
@@ -141,35 +139,62 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {sortedRows.length >= 2 && (
+        <section className="hero-kpi-strip" aria-label="Main KPI">
+          <div
+            className="hero-kpi-block"
+            style={
+              {
+                "--team-primary": TEAM_THEME[sortedRows[0].team].primary,
+                "--team-font": TEAM_THEME[sortedRows[0].team].fontVar,
+              } as CSSProperties
+            }
+          >
+            <p className="hero-kpi-label">{sortedRows[0].team_name}</p>
+            <p className="hero-kpi-value">
+              {formatNumber(sortedRows[0].overholdelse_pct, 1)}%
+            </p>
+          </div>
+          <div className="hero-kpi-gap" aria-hidden />
+          <div
+            className="hero-kpi-block"
+            style={
+              {
+                "--team-primary": TEAM_THEME[sortedRows[1].team].primary,
+                "--team-font": TEAM_THEME[sortedRows[1].team].fontVar,
+              } as CSSProperties
+            }
+          >
+            <p className="hero-kpi-label">{sortedRows[1].team_name}</p>
+            <p className="hero-kpi-value">
+              {formatNumber(sortedRows[1].overholdelse_pct, 1)}%
+            </p>
+          </div>
+        </section>
+      )}
+
       <section className="overview-grid">
         <article className="overview-card">
           <p className="overview-label">Monthly momentum</p>
           <p className={`overview-value ${deltaClass(averageMonthlyDelta, true)}`}>
-            {formatSigned(averageMonthlyDelta, 1)} pp
+            {formatSigned(averageMonthlyDelta, 1)}
           </p>
-          <p className="overview-subtle">Average change vs previous month</p>
         </article>
         <article className="overview-card">
           <p className="overview-label">Teams improving</p>
           <p className="overview-value">{improvedTeams}</p>
-          <p className="overview-subtle">{rows.length - improvedTeams} falling back</p>
         </article>
         <article className="overview-card">
-          <p className="overview-label">At best-month level</p>
+          <p className="overview-label">At best level</p>
           <p className="overview-value">{teamsAtOrAboveBest}</p>
-          <p className="overview-subtle">
-            {rows.length - teamsAtOrAboveBest} still chasing their peak
-          </p>
         </article>
       </section>
 
       <section className="teams-grid">
-        {sortedRows.map((team, index) => {
+        {sortedRows.map((team) => {
           const theme = TEAM_THEME[team.team];
           const rival = sortedRows.find((row) => row.team !== team.team) ?? null;
           const leading = !hasTie && top.team === team.team;
-          const rank = index + 1;
-          const ratioDelta = rival ? team.overholdelse_pct - rival.overholdelse_pct : 0;
           const monthlyDelta = team.overholdelse_pct - team.previous_month_pct;
           const bestGap = team.overholdelse_pct - team.best_month_pct;
           const incomingDelta = rival ? team.incoming_cases - rival.incoming_cases : 0;
@@ -177,15 +202,6 @@ export default async function HomePage() {
           const backlogDelta = rival ? team.open_backlog - rival.open_backlog : 0;
           const handleDelta = rival
             ? team.avg_handle_minutes - rival.avg_handle_minutes
-            : 0;
-          const categoryWins = rival
-            ? [
-                ratioDelta > 0,
-                incomingDelta > 0,
-                resolvedDelta > 0,
-                backlogDelta < 0,
-                handleDelta < 0,
-              ].filter(Boolean).length
             : 0;
 
           return (
@@ -205,15 +221,6 @@ export default async function HomePage() {
               <div className="team-head">
                 <h2 className="team-name">{team.team_name}</h2>
                 {leading ? <span className="lead-pill">Leading</span> : null}
-              </div>
-              <div className="team-race-meta">
-                <span className={`rank-pill ${rank === 1 ? "top" : ""}`}>
-                  Rank #{rank}
-                </span>
-                <span
-                  className={`delta-pill ${deltaClass(ratioDelta, true)}`}
-                >{`${formatSigned(ratioDelta, 1)} pp vs rival`}</span>
-                <span className="category-pill">{categoryWins}/5 categories</span>
               </div>
 
               <div className="main-kpi-wrap">
@@ -239,7 +246,7 @@ export default async function HomePage() {
                     {formatNumber(team.previous_month_pct, 1)}%
                   </p>
                   <p className={`secondary-delta ${deltaClass(monthlyDelta, true)}`}>
-                    {`${formatSigned(monthlyDelta, 1)} pp to current`}
+                    {formatSigned(monthlyDelta, 1)}
                   </p>
                 </div>
                 <div className="self-benchmark-card">
@@ -248,9 +255,7 @@ export default async function HomePage() {
                     {formatNumber(team.best_month_pct, 1)}%
                   </p>
                   <p className={`secondary-delta ${deltaClass(bestGap, true)}`}>
-                    {bestGap >= 0
-                      ? "New best reached"
-                      : `${formatNumber(Math.abs(bestGap), 1)} pp to match best`}
+                    {bestGap >= 0 ? "Best" : formatNumber(Math.abs(bestGap), 1)}
                   </p>
                   <div className="best-progress-track" aria-hidden>
                     <div
@@ -273,36 +278,36 @@ export default async function HomePage() {
                   <p className="secondary-value">
                     {formatNumber(team.incoming_cases)}
                   </p>
-                  <p
-                    className={`secondary-delta ${deltaClass(incomingDelta, true)}`}
-                  >{`${formatSigned(incomingDelta, 0)} vs rival`}</p>
+                  <p className={`secondary-delta ${deltaClass(incomingDelta, true)}`}>
+                    {formatSigned(incomingDelta, 0)}
+                  </p>
                 </div>
                 <div className="secondary-card resolved">
-                  <p className="secondary-label">Kept percentage</p>
+                  <p className="secondary-label">Kept</p>
                   <p className="secondary-value">
                     {formatNumber(team.resolved_cases)}
                   </p>
-                  <p
-                    className={`secondary-delta ${deltaClass(resolvedDelta, true)}`}
-                  >{`${formatSigned(resolvedDelta, 0)} vs rival`}</p>
+                  <p className={`secondary-delta ${deltaClass(resolvedDelta, true)}`}>
+                    {formatSigned(resolvedDelta, 0)}
+                  </p>
                 </div>
                 <div className="secondary-card backlog">
-                  <p className="secondary-label">Negotiation rate</p>
+                  <p className="secondary-label">Negotiation</p>
                   <p className="secondary-value">
                     {formatNumber(team.open_backlog)}
                   </p>
-                  <p
-                    className={`secondary-delta ${deltaClass(backlogDelta, false)}`}
-                  >{`${formatSigned(backlogDelta, 0)} vs rival`}</p>
+                  <p className={`secondary-delta ${deltaClass(backlogDelta, false)}`}>
+                    {formatSigned(backlogDelta, 0)}
+                  </p>
                 </div>
                 <div className="secondary-card handle-time">
                   <p className="secondary-label">Wrap-up</p>
                   <p className="secondary-value">
                     {formatNumber(team.avg_handle_minutes, 1)} min
                   </p>
-                  <p
-                    className={`secondary-delta ${deltaClass(handleDelta, false)}`}
-                  >{`${formatSigned(handleDelta, 1)} min vs rival`}</p>
+                  <p className={`secondary-delta ${deltaClass(handleDelta, false)}`}>
+                    {formatSigned(handleDelta, 1)}
+                  </p>
                 </div>
               </div>
             </article>
