@@ -2,12 +2,31 @@ import "server-only";
 
 import type { TeamBenchmark, TeamId, TeamUpdatePayload } from "@/lib/types";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY =
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const SUPABASE_SECRET_KEY =
-  process.env.SUPABASE_SECRET_KEY ?? process.env.SUPABASE_SERVICE_ROLE_KEY;
+type SupabaseConfig = {
+  url: string;
+  publishableKey: string;
+  secretKey: string;
+};
+
+function getSupabaseConfig(): SupabaseConfig {
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").trim();
+  const publishableKey = (
+    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ??
+    ""
+  ).trim();
+  const secretKey = (
+    process.env.SUPABASE_SECRET_KEY ??
+    process.env.SUPABASE_SERVICE_ROLE_KEY ??
+    ""
+  ).trim();
+
+  return {
+    url,
+    publishableKey,
+    secretKey,
+  };
+}
 
 const DEFAULT_TEAMS: TeamBenchmark[] = [
   {
@@ -37,25 +56,28 @@ const DEFAULT_TEAMS: TeamBenchmark[] = [
 ];
 
 function hasPublicConfig() {
-  return Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
+  const { url, publishableKey } = getSupabaseConfig();
+  return Boolean(url && publishableKey);
 }
 
 function hasServiceConfig() {
-  return Boolean(SUPABASE_URL && SUPABASE_SECRET_KEY);
+  const { url, secretKey } = getSupabaseConfig();
+  return Boolean(url && secretKey);
 }
 
 export async function getBenchmarks(): Promise<TeamBenchmark[]> {
   if (!hasPublicConfig()) {
     return DEFAULT_TEAMS;
   }
+  const { url, publishableKey } = getSupabaseConfig();
 
   const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/team_benchmarks?select=team,team_name,overholdelse_pct,previous_month_pct,best_month_pct,incoming_cases,resolved_cases,open_backlog,avg_handle_minutes,updated_at&order=team.asc`,
+    `${url}/rest/v1/team_benchmarks?select=team,team_name,overholdelse_pct,previous_month_pct,best_month_pct,incoming_cases,resolved_cases,open_backlog,avg_handle_minutes,updated_at&order=team.asc`,
     {
       cache: "no-store",
       headers: {
-        apikey: SUPABASE_PUBLISHABLE_KEY as string,
-        Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY as string}`,
+        apikey: publishableKey,
+        Authorization: `Bearer ${publishableKey}`,
       },
     },
   );
@@ -75,18 +97,21 @@ export async function getBenchmarks(): Promise<TeamBenchmark[]> {
 }
 
 export async function updateBenchmark(payload: TeamUpdatePayload) {
-  if (!hasServiceConfig()) {
-    throw new Error("Missing Supabase service role configuration.");
+  const { url, secretKey } = getSupabaseConfig();
+  if (!url || !secretKey) {
+    throw new Error(
+      `Missing Supabase server configuration. NEXT_PUBLIC_SUPABASE_URL set: ${Boolean(url)}. SUPABASE_SECRET_KEY/SUPABASE_SERVICE_ROLE_KEY set: ${Boolean(secretKey)}.`,
+    );
   }
 
   const team = payload.team as TeamId;
   const response = await fetch(
-    `${SUPABASE_URL}/rest/v1/team_benchmarks?team=eq.${team}`,
+    `${url}/rest/v1/team_benchmarks?team=eq.${team}`,
     {
       method: "PATCH",
       headers: {
-        apikey: SUPABASE_SECRET_KEY as string,
-        Authorization: `Bearer ${SUPABASE_SECRET_KEY as string}`,
+        apikey: secretKey,
+        Authorization: `Bearer ${secretKey}`,
         "Content-Type": "application/json",
         Prefer: "return=representation",
       },
