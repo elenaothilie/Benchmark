@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { ThemeToggle } from "@/components/theme-toggle";
+import { TvModeToggle } from "@/components/tv-mode-toggle";
+import { TEAM_THEME } from "@/lib/team-theme";
 import type { TeamBenchmark, TeamId } from "@/lib/types";
+import type { CSSProperties } from "react";
 
 type Props = {
   initialRows: TeamBenchmark[];
@@ -45,12 +49,23 @@ function toState(rows: TeamBenchmark[]): RowState {
 }
 
 function formatSigned(value: number) {
-  if (value === 0) {
-    return "0.0";
-  }
-
-  return `${value > 0 ? "+" : "-"}${Math.abs(value).toFixed(1)}`;
+  if (value === 0) return "0.0";
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${value.toFixed(1)}`;
 }
+
+function deltaClass(value: number, higherIsBetter = true) {
+  if (value === 0) return "neutral";
+  if (higherIsBetter) return value > 0 ? "positive" : "negative";
+  return value < 0 ? "positive" : "negative";
+}
+
+const METRICS_ROWS: { label: string; key: keyof TeamBenchmark }[] = [
+  { label: "Handled calls", key: "incoming_cases" },
+  { label: "Kept", key: "resolved_cases" },
+  { label: "Negotiation", key: "open_backlog" },
+  { label: "Wrap-up", key: "avg_handle_minutes" },
+];
 
 export function AdminEditor({ initialRows }: Props) {
   const router = useRouter();
@@ -58,8 +73,22 @@ export function AdminEditor({ initialRows }: Props) {
   const [status, setStatus] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const sorted = [rows.avida, rows.santander].sort((a, b) => {
+    if (b.overholdelse_pct !== a.overholdelse_pct) {
+      return b.overholdelse_pct - a.overholdelse_pct;
+    }
+    return b.resolved_cases - a.resolved_cases;
+  });
+  const teamA = sorted[0]!;
+  const teamB = sorted[1]!;
+  const leadDelta = teamA.overholdelse_pct - teamB.overholdelse_pct;
+
+  const latestUpdate = [teamA.updated_at, teamB.updated_at]
+    .filter((v): v is string => Boolean(v))
+    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
+
   function setValue(team: TeamId, key: keyof TeamBenchmark, value: string) {
-    const parsed = Number(value);
+    const parsed = Number(value.replace(",", "."));
     setRows((prev) => ({
       ...prev,
       [team]: {
@@ -81,20 +110,17 @@ export function AdminEditor({ initialRows }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      const result = (await response.json().catch(() => null)) as
-        | { message?: string }
-        | null;
+      const result = (await response.json().catch(() => null)) as { message?: string } | null;
 
       if (!response.ok) {
         setSaving(false);
-        const details = result?.message ? ` ${result.message}` : "";
-        setStatus(`Failed to update ${payload.team_name}.${details}`);
+        setStatus(result?.message ? `Failed: ${result.message}` : "Failed to save.");
         return;
       }
     }
 
     setSaving(false);
-    setStatus("Saved successfully.");
+    setStatus("Saved.");
     router.refresh();
   }
 
@@ -104,136 +130,147 @@ export function AdminEditor({ initialRows }: Props) {
   }
 
   return (
-    <section className="admin-shell">
-      <form className="admin-card" onSubmit={saveAll}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "0.8rem",
-            gap: "0.8rem",
-          }}
-        >
-          <div>
-            <h1 style={{ margin: 0 }}>Admin - KPI Update</h1>
-            <p className="wallboard-subtle" style={{ marginTop: "0.35rem" }}>
-              Manual updates only. Changes are visible on the wallboard after the
-              next refresh.
+    <main className="editorial-shell editorial-fade-in">
+      <form onSubmit={saveAll} className="editorial-admin-form">
+        <header className="editorial-header">
+          <h1 className="editorial-title">Benchmark</h1>
+          <div className="editorial-header-center">
+            <p className="editorial-meta">
+              {latestUpdate
+                ? new Intl.DateTimeFormat("nb-NO", {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  }).format(new Date(latestUpdate))
+                : "Live"}
             </p>
+            {status ? <span className="editorial-admin-status">{status}</span> : null}
           </div>
-          <button className="btn btn-muted" onClick={logout} type="button">
-            Log out
-          </button>
-        </div>
+          <div className="editorial-actions">
+            <ThemeToggle />
+            <TvModeToggle />
+            <button className="btn btn-muted theme-toggle" type="button" onClick={logout}>
+              Log out
+            </button>
+            <button className="btn btn-primary" type="submit" disabled={saving}>
+              {saving ? "Saving…" : "Save"}
+            </button>
+          </div>
+        </header>
 
-        <div className="admin-grid">
-          {(["avida", "santander"] as const).map((teamId) => {
-            const team = rows[teamId];
-            const previousDelta = team.overholdelse_pct - team.previous_month_pct;
-            const bestGap = team.overholdelse_pct - team.best_month_pct;
+        <section className="editorial-hero" aria-label="Main KPI">
+          <div
+            className="editorial-hero-team editorial-hero-team--leading"
+            style={
+              {
+                "--team-primary": TEAM_THEME[teamA.team].primary,
+                "--team-font": TEAM_THEME[teamA.team].fontVar,
+              } as CSSProperties
+            }
+          >
+            <p className="editorial-hero-name">{teamA.team_name}</p>
+            <label className="editorial-hero-kpi editorial-admin-kpi-input">
+              <input
+                type="text"
+                inputMode="decimal"
+                value={teamA.overholdelse_pct}
+                onChange={(e) => setValue(teamA.team, "overholdelse_pct", e.target.value)}
+                aria-label={`${teamA.team_name} KPI`}
+              />
+              <span className="kpi-suffix" aria-hidden>%</span>
+            </label>
+            <div className="editorial-hero-context">
+              <div className="editorial-hero-context-row">
+                <span className="editorial-metric-label">Best month</span>
+                <span className="editorial-metric-val">{teamA.best_month_pct.toFixed(1)}%</span>
+              </div>
+              <div className="editorial-hero-context-row">
+                <span className="editorial-metric-label">Last month</span>
+                <span className="editorial-metric-val">{teamA.previous_month_pct.toFixed(1)}%</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="editorial-hero-delta-wrap">
+            <span className="editorial-delta-line" aria-hidden />
+            <div className={`editorial-hero-delta ${deltaClass(leadDelta, true)}`}>
+              {formatSigned(leadDelta)} LEAD
+            </div>
+            <span className="editorial-delta-line" aria-hidden />
+          </div>
+
+          <div
+            className="editorial-hero-team"
+            style={
+              {
+                "--team-primary": TEAM_THEME[teamB.team].primary,
+                "--team-font": TEAM_THEME[teamB.team].fontVar,
+              } as CSSProperties
+            }
+          >
+            <p className="editorial-hero-name">{teamB.team_name}</p>
+            <label className="editorial-hero-kpi editorial-admin-kpi-input">
+              <input
+                type="text"
+                inputMode="decimal"
+                value={teamB.overholdelse_pct}
+                onChange={(e) => setValue(teamB.team, "overholdelse_pct", e.target.value)}
+                aria-label={`${teamB.team_name} KPI`}
+              />
+              <span className="kpi-suffix" aria-hidden>%</span>
+            </label>
+            <div className="editorial-hero-context">
+              <div className="editorial-hero-context-row">
+                <span className="editorial-metric-label">Best month</span>
+                <span className="editorial-metric-val">{teamB.best_month_pct.toFixed(1)}%</span>
+              </div>
+              <div className="editorial-hero-context-row">
+                <span className="editorial-metric-label">Last month</span>
+                <span className="editorial-metric-val">{teamB.previous_month_pct.toFixed(1)}%</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="editorial-metrics editorial-metrics-fade">
+          {METRICS_ROWS.map(({ label, key }) => {
+            const isWrapUp = key === "avg_handle_minutes";
+            const aVal = teamA[key as keyof TeamBenchmark] as number;
+            const bVal = teamB[key as keyof TeamBenchmark] as number;
+            const displayA = isWrapUp ? aVal * 60 : aVal;
+            const displayB = isWrapUp ? bVal * 60 : bVal;
+            const handleChangeA = (v: string) =>
+              setValue(teamA.team, key, isWrapUp ? String(Number(v.replace(",", ".")) / 60) : v);
+            const handleChangeB = (v: string) =>
+              setValue(teamB.team, key, isWrapUp ? String(Number(v.replace(",", ".")) / 60) : v);
             return (
-              <article key={teamId} className="admin-team">
-                <h2 style={{ marginTop: 0 }}>{team.team_name}</h2>
-                <p className="wallboard-subtle" style={{ marginTop: "-0.45rem" }}>
-                  Monthly trend: {formatSigned(previousDelta)} pp |{" "}
-                  {bestGap >= 0
-                    ? "Best month reached"
-                    : `${Math.abs(bestGap).toFixed(1)} pp to best`}
-                </p>
-                <div className="field">
-                  <label>NET PAYER RATIO</label>
+              <div key={key} className="editorial-metric-row editorial-admin-metric-row">
+                <span className="editorial-metric-label">{label}</span>
+                <label className="editorial-metric-val editorial-admin-metric-input">
                   <input
-                    type="number"
-                    step="0.1"
-                    value={team.overholdelse_pct}
-                    onChange={(event) =>
-                      setValue(teamId, "overholdelse_pct", event.target.value)
-                    }
+                    type="text"
+                    inputMode="decimal"
+                    value={displayA}
+                    onChange={(e) => handleChangeA(e.target.value)}
+                    aria-label={`${label} ${teamA.team_name}`}
                   />
-                </div>
-                <div className="field">
-                  <label>Previous month ratio</label>
+                  {isWrapUp ? "s" : key === "resolved_cases" || key === "open_backlog" ? "%" : null}
+                </label>
+                <span className="editorial-metric-sep" aria-hidden>|</span>
+                <label className="editorial-metric-val editorial-admin-metric-input">
                   <input
-                    type="number"
-                    step="0.1"
-                    value={team.previous_month_pct}
-                    onChange={(event) =>
-                      setValue(teamId, "previous_month_pct", event.target.value)
-                    }
+                    type="text"
+                    inputMode="decimal"
+                    value={displayB}
+                    onChange={(e) => handleChangeB(e.target.value)}
+                    aria-label={`${label} ${teamB.team_name}`}
                   />
-                </div>
-                <div className="field">
-                  <label>Best month ratio</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={team.best_month_pct}
-                    onChange={(event) =>
-                      setValue(teamId, "best_month_pct", event.target.value)
-                    }
-                  />
-                </div>
-                <div className="field">
-                  <label>Handled calls</label>
-                  <input
-                    type="number"
-                    value={team.incoming_cases}
-                    onChange={(event) =>
-                      setValue(teamId, "incoming_cases", event.target.value)
-                    }
-                  />
-                </div>
-                <div className="field">
-                  <label>Kept percentage</label>
-                  <input
-                    type="number"
-                    value={team.resolved_cases}
-                    onChange={(event) =>
-                      setValue(teamId, "resolved_cases", event.target.value)
-                    }
-                  />
-                </div>
-                <div className="field">
-                  <label>Negotiation rate</label>
-                  <input
-                    type="number"
-                    value={team.open_backlog}
-                    onChange={(event) =>
-                      setValue(teamId, "open_backlog", event.target.value)
-                    }
-                  />
-                </div>
-                <div className="field" style={{ marginBottom: 0 }}>
-                  <label>Wrap-up (min)</label>
-                  <input
-                    type="number"
-                    step="0.1"
-                    value={team.avg_handle_minutes}
-                    onChange={(event) =>
-                      setValue(teamId, "avg_handle_minutes", event.target.value)
-                    }
-                  />
-                </div>
-              </article>
+                  {isWrapUp ? "s" : key === "resolved_cases" || key === "open_backlog" ? "%" : null}
+                </label>
+              </div>
             );
           })}
-        </div>
-
-        <div
-          style={{
-            marginTop: "0.9rem",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.9rem",
-          }}
-        >
-          <button className="btn btn-primary" type="submit" disabled={saving}>
-            {saving ? "Saving..." : "Save All"}
-          </button>
-          {status ? <p className="wallboard-subtle">{status}</p> : null}
-        </div>
+        </section>
       </form>
-    </section>
+    </main>
   );
 }

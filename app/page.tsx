@@ -88,6 +88,16 @@ export default async function HomePage() {
             <p className="editorial-hero-kpi">
               <AnimatedKpi value={teamA.overholdelse_pct} />
             </p>
+            <div className="editorial-hero-context">
+              <div className="editorial-hero-context-row">
+                <span className="editorial-metric-label">Best month</span>
+                <span className="editorial-metric-val">{formatNumber(teamA.best_month_pct, 1)}%</span>
+              </div>
+              <div className="editorial-hero-context-row">
+                <span className="editorial-metric-label">Last month</span>
+                <span className="editorial-metric-val">{formatNumber(teamA.previous_month_pct, 1)}%</span>
+              </div>
+            </div>
           </div>
 
           <div className="editorial-hero-delta-wrap" key={`delta-${leadDelta}`}>
@@ -111,6 +121,16 @@ export default async function HomePage() {
             <p className="editorial-hero-kpi">
               <AnimatedKpi value={teamB.overholdelse_pct} />
             </p>
+            <div className="editorial-hero-context">
+              <div className="editorial-hero-context-row">
+                <span className="editorial-metric-label">Best month</span>
+                <span className="editorial-metric-val">{formatNumber(teamB.best_month_pct, 1)}%</span>
+              </div>
+              <div className="editorial-hero-context-row">
+                <span className="editorial-metric-label">Last month</span>
+                <span className="editorial-metric-val">{formatNumber(teamB.previous_month_pct, 1)}%</span>
+              </div>
+            </div>
           </div>
         </section>
       )}

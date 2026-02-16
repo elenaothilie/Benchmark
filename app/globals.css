@@ -222,6 +222,22 @@ html[data-theme="light"] .editorial-hero-kpi {
   color: var(--team-primary);
 }
 
+/* Best month / last month – under each team KPI, same table feel, space to breathe */
+.editorial-hero-context {
+  margin-top: 1.75em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.editorial-hero-context-row {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
 .editorial-hero-team--leading {
   position: relative;
 }
@@ -346,32 +362,132 @@ body.tv-mode .editorial-actions { margin-left: auto; }
   }
 }
 
-/* Admin */
-.admin-shell {
-  min-height: 100vh;
+/* Admin – same layout as main dashboard, with editable inputs */
+.editorial-admin-form {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
   display: grid;
-  place-items: center;
-  padding: 1.5rem;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: auto 1fr minmax(0, 38vh);
+  gap: 0;
+  min-height: 0;
+  width: 100%;
 }
 
-.admin-card {
-  width: min(1000px, 96vw);
+.editorial-admin-form .editorial-header {
+  grid-column: 1 / -1;
+}
+
+.editorial-admin-form .editorial-hero {
+  grid-column: 1 / -1;
+}
+
+.editorial-admin-form .editorial-metrics {
+  grid-column: 1 / -1;
+}
+
+.editorial-header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.editorial-admin-status {
+  font-size: 0.65rem;
+  color: #22c55e;
+}
+
+.editorial-admin-kpi-input {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  cursor: text;
+}
+
+.editorial-admin-kpi-input input {
+  width: 4ch;
+  max-width: 12ch;
+  font: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid var(--team-primary);
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  outline: none;
+}
+
+.editorial-admin-kpi-input input:focus {
+  border-bottom-color: var(--team-primary);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+}
+
+.editorial-admin-kpi-input .kpi-suffix {
+  font-family: system-ui, -apple-system, sans-serif;
+  margin-left: 0.05em;
+}
+
+.editorial-admin-metric-input {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  cursor: text;
+}
+
+.editorial-admin-metric-input input {
+  width: 5ch;
+  max-width: 12ch;
+  font: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  padding: 0 0.25rem;
+  margin: 0;
+  text-align: right;
+  outline: none;
+}
+
+.editorial-admin-metric-input input:focus {
+  border-bottom-color: var(--muted);
+}
+
+.editorial-admin-metric-input input::placeholder {
+  color: var(--muted);
+}
+
+/* Admin login – same shell as dashboard, centered card */
+.admin-login-center {
+  grid-column: 1 / -1;
+  grid-row: 2 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.admin-login-center .admin-card {
+  width: min(420px, 96vw);
   background: var(--card);
   border: 1px solid var(--line);
   border-radius: 1rem;
-  padding: 1rem;
+  padding: 1.5rem;
 }
 
-.admin-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.admin-team {
-  border: 1px solid var(--line);
-  border-radius: 0.8rem;
-  padding: 1rem;
+.admin-login-error {
+  color: #f87171;
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
 }
 
 .field {
