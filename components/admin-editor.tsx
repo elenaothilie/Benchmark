@@ -181,11 +181,29 @@ export function AdminEditor({ initialRows }: Props) {
             <div className="editorial-hero-context">
               <div className="editorial-hero-context-row">
                 <span className="editorial-metric-label">Best month</span>
-                <span className="editorial-metric-val">{teamA.best_month_pct.toFixed(1)}%</span>
+                <label className="editorial-metric-val editorial-admin-metric-input">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={teamA.best_month_pct}
+                    onChange={(e) => setValue(teamA.team, "best_month_pct", e.target.value)}
+                    aria-label={`Best month ${teamA.team_name}`}
+                  />
+                  %
+                </label>
               </div>
               <div className="editorial-hero-context-row">
                 <span className="editorial-metric-label">Last month</span>
-                <span className="editorial-metric-val">{teamA.previous_month_pct.toFixed(1)}%</span>
+                <label className="editorial-metric-val editorial-admin-metric-input">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={teamA.previous_month_pct}
+                    onChange={(e) => setValue(teamA.team, "previous_month_pct", e.target.value)}
+                    aria-label={`Last month ${teamA.team_name}`}
+                  />
+                  %
+                </label>
               </div>
             </div>
           </div>
@@ -221,11 +239,29 @@ export function AdminEditor({ initialRows }: Props) {
             <div className="editorial-hero-context">
               <div className="editorial-hero-context-row">
                 <span className="editorial-metric-label">Best month</span>
-                <span className="editorial-metric-val">{teamB.best_month_pct.toFixed(1)}%</span>
+                <label className="editorial-metric-val editorial-admin-metric-input">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={teamB.best_month_pct}
+                    onChange={(e) => setValue(teamB.team, "best_month_pct", e.target.value)}
+                    aria-label={`Best month ${teamB.team_name}`}
+                  />
+                  %
+                </label>
               </div>
               <div className="editorial-hero-context-row">
                 <span className="editorial-metric-label">Last month</span>
-                <span className="editorial-metric-val">{teamB.previous_month_pct.toFixed(1)}%</span>
+                <label className="editorial-metric-val editorial-admin-metric-input">
+                  <input
+                    type="text"
+                    inputMode="decimal"
+                    value={teamB.previous_month_pct}
+                    onChange={(e) => setValue(teamB.team, "previous_month_pct", e.target.value)}
+                    aria-label={`Last month ${teamB.team_name}`}
+                  />
+                  %
+                </label>
               </div>
             </div>
           </div>

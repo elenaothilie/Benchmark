@@ -35,7 +35,7 @@ html[data-theme="dark"], html[data-theme="dark"] body {
 }
 
 html[data-theme="light"], html[data-theme="light"] body {
-  background: #f8f7f5;
+  background: #f9f7f4;
   color: #1a1a1a;
 }
 
@@ -530,7 +530,7 @@ body.tv-mode .editorial-actions { margin-left: auto; }
 }
 
 .theme-light {
-  --bg: #f8f7f5;
+  --bg: #f9f7f4;
   --surface: #f0efed;
   --card: #ffffff;
   --text: #1a1a1a;
