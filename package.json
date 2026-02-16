@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "clean": "node -e \"try{require('fs').rmSync('.next',{recursive:true,force:true});console.log('Cleaned .next');}catch(e){console.error('Stop dev server first');process.exit(1);}\""
   },
   "dependencies": {
     "next": "16.1.6",

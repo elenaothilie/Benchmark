@@ -21,7 +21,7 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -31,13 +31,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!mounted) return;
     const stored = window.localStorage.getItem(STORAGE_KEY);
-    setThemeState(stored === "light" ? "light" : "dark");
+    setThemeState(stored === "dark" ? "dark" : "light");
   }, [mounted]);
 
   useEffect(() => {
     if (!mounted) return;
     window.localStorage.setItem(STORAGE_KEY, theme);
   }, [mounted, theme]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", theme);
+  }, [theme]);
 
   const setTheme = useCallback((next: Theme) => {
     setThemeState(next);
@@ -52,6 +56,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       <div
         className={theme === "light" ? "theme-light" : ""}
         data-theme={theme}
+        style={{ minHeight: "100vh", width: "100%" }}
       >
         {children}
       </div>

@@ -1,24 +1,6 @@
 import type { Metadata } from "next";
-import { Montserrat_Alternates, Orbitron } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
-
-const orbitron = Orbitron({
-  variable: "--font-orbitron",
-  subsets: ["latin"],
-});
-
-const montserratAlternates = Montserrat_Alternates({
-  variable: "--font-montserrat-alternates",
-  subsets: ["latin"],
-  weight: ["600", "700"],
-});
-
-const sans = Montserrat_Alternates({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
 
 export const metadata: Metadata = {
   title: "Benchmark Wallboard",
@@ -31,10 +13,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${orbitron.variable} ${montserratAlternates.variable} ${sans.variable} antialiased`}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('wallboard_theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':'light');})();`,
+          }}
+        />
+      </head>
+      <body className="antialiased">
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

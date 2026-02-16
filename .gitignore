@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# OneDrive: Turbopack/LevelDB cache files (in .next) - avoid sync churn
+*.sst
+*.ldb
