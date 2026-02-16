@@ -398,6 +398,29 @@ body.tv-mode .editorial-actions { margin-left: auto; }
   color: #22c55e;
 }
 
+.editorial-edit-prompt {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.editorial-edit-password-input {
+  font-size: 0.65rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.3rem;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  width: 6rem;
+}
+
+.editorial-edit-password-error {
+  font-size: 0.6rem;
+  color: #f87171;
+  flex-basis: 100%;
+}
+
 .editorial-admin-kpi-input {
   display: flex;
   align-items: baseline;
